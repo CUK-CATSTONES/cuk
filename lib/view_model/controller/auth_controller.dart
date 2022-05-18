@@ -80,13 +80,13 @@ class AuthController extends GetxController {
   /// 이는 익명 사용자 역시 현재 익명 상태로 로그인된 상태이기 때문입니다.
   /// 로그인 상태에서 로그인을 시도할 수 없으므로, 회원탈퇴를 진행하여 DB의 해당 익명 계정 정보를 삭제하고 로그아웃합니다.
   ///
-  /// 로그인 성공 시(`result == 'Status.success'`), 사용자의 [Auth]상태에 따라 아래와 같이 작동합니다.
+  /// 로그인 성공 시(`result == Status.success`), 사용자의 [Auth]상태에 따라 아래와 같이 작동합니다.
   /// - [Auth.signIn]일 경우, 이메일 인증이 필요 Dialog를 출력합니다.
   /// 해당 Dialog는 `닫기`를 클릭하여야 닫을 수 있으며, `닫기` 클릭 시 로그아웃[signOut]을 진행합니다.
   /// `인증 메일 재발송` 버튼 클릭 시, 인증 메일을 재발송하는 로직[sendEmailVerification]을 실행합니다.
   /// - [Auth.emailVerified]일 경우, 해당 사용자의 정보를 읽어오는 [UserController]의 [readUserInfoInDB]을 실행합니다.
   ///
-  /// 로그인 실패 시(`result == 'Status.userNotFound || Status.wrongPW || Status.error'`), 각 Exception에 맞게 예외처리합니다.
+  /// 로그인 실패 시(`result == Status.userNotFound || Status.wrongPW || Status.error`), 각 Exception에 맞게 예외처리합니다.
   /// Indicator를 닫고 해당 상황에 맞는 snackbar를 출력합니다.
   ///
   /// [signIn]은 [String] 타입의 [id], [pw]를 parameter로 가지므로 사용시 [id], [pw]를 전달해야 합니다.
@@ -196,14 +196,14 @@ class AuthController extends GetxController {
   /// 익명 계정[Auth.isAnonymous]에 대해 로그아웃을 진행할 경우, FirebaseAuth에서 해당 익명 계정은 더이상 접근이 불가능한 legacy가 되어 관리가 불가능해집니다.
   /// 이는 FirebaseAuth가 제공하는 익명 로그인 기능이 익명 계정 생성시 매번 다른 uid를 만들어내기 때문입니다.
   ///
-  /// 로그아웃에 성공할 경우(`result == 'success'`), [Service.SIGN_IN_ROUTE]를 Display합니다.
+  /// 로그아웃에 성공할 경우(`result == 'Status.success'`), [Service.SIGN_IN_ROUTE]를 Display합니다.
   /// 이때, 사용자의 이전 화면이 [Service.SIGN_IN_ROUTE]라면 Display하지 않고 [Get.back]을 통해 인증메일 재발송 Dialog를 off합니다.
   /// [signOut]이 작동될 때, 이전 화면이 [Service.SIGN_IN_ROUTE]일 경우는 [signIn]에서 사용자가 [Auth.signIn]상태로 로그인을 시도한 후, 인증메일 재발송 Dialog에서 `닫기`버튼을 클릭한 상황입니다.
   /// 따라서, 해당 상황에서는 새롭게 [Service.SIGN_IN_ROUTE]를 Display할 필요없이 [Get.back]을 통해 [Service.SIGN_IN_ROUTE]로 되돌아가게 합니다.
   ///
   /// 로그아웃에 실패할 경우, 로그아웃 실패 snackbar를 출력합니다.
   ///
-  /// 시스템(v22.5.2 기준)에서 사용자 [Auth]별 [signOut]작동 시점은 아래와 같습니다.
+  /// 시스템(latest 기준)에서 사용자 [Auth]별 [signOut]작동 시점은 아래와 같습니다.
   ///
   /// |[Auth]              |[signOut]작동 시점                                            |
   /// |:-------------------|:-----------------------------------------------------------|
@@ -254,53 +254,55 @@ class AuthController extends GetxController {
 
   /// [sendEmailVerification]은 인증메일 발송에 사용되며, 이메일 발송을 제어합니다.
   ///
-  /// [AuthRepository]에 이메일 인증을 요청합니다.
-  /// 회원가입[signUp] 성공 로직에서 사용하며, 사용자가 계정(가톨릭대학교 웹메일)로 인증메일을 발송합니다.
+  /// [AuthRepository]에 이메일 발송을 요청합니다.
+  /// 회원가입[signUp] 성공 로직에서 사용하며, 사용자의 계정(가톨릭대학교 웹메일)으로 인증메일을 발송합니다.
   /// 인증메일 발송은 FirebaseAuth에서 제공하는 기능을 활용합니다.
   ///
-  /// 또한, 사용자가 [Auth.signIn]상태로 [signIn]을 시도할 경우 인증메일 재발송 Dialog가 출력됩니다.
-  /// 해당 Dialog에서 `인증메일 재발송 버튼`을 클릭할 경우 [sendEmailVerification]이 작동합니다.
+  /// 또한, [sendEmailVerification]은 `인증메일 재발송 Dialog`에서 `인증메일 재발송 버튼`을 클릭할 경우 작동됩니다.
   ///
-  /// 인증메일 발송에 성공한 경우(),
-  /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
-  /// - 인증에 실패할 경우
-  /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
-  /// - 이미 인증된 계정일 경우
-  /// > [AuthRepository]에 인증요청을 하지 않고 [Get.snackbar]을 출력합니다.
+  /// [sendEmailVerification]은 사용자가 [Auth.signIn]인 경우에만 사용되어야 합니다.
+  /// 이메일 인증이 발송되는 경우는 사용자가 로그인을 하였지만 아직 인증을 받지 못한 경우이기 때문입니다.
+  /// 보통의 경우 [Auth.signIn]상태에서 [sendEmailVerification]을 수행하고,
+  /// 이후 해당 사용자를 [signOut]을 사용하여 [Auth.signOut]상태로 변경합니다.
+  ///
+  /// 인증메일 발송에 성공한 경우(`result == Status.success`), 인증 메일 성공 snackbar를 출력합니다.
+  /// 인증메일 발송에 실패한 경우(`result == Status.alreadyValificated || Status.error`), 각 상황에 맞게 snackbar를 출력합니다.
+  ///
+  /// latest 기준, [sendEmailVerification]은 [signUp], [signIn]에서만 사용됩니다.
+  ///
+  /// ---
+  /// Example:
+  /// ```
+  /// await sendEmailVerification();
+  /// ```
   Future sendEmailVerification() async {
-    // [1]이메일 인증 상태 확인
-    // - 현재 사용자 상태가 이메일 인증이 되지 않는 경우에만 인증메일이 발송되도록 함
-    if (status != Auth.emailVerified) {
-      // Display Indicator
-      Get.defaultDialog(
-        barrierDismissible: false,
-        content: const CircularProgressIndicator.adaptive(),
-      );
+    // Display Indicator
+    Get.defaultDialog(
+      barrierDismissible: false,
+      content: const CircularProgressIndicator.adaptive(),
+    );
 
-      // [2]인증메일 발송
-      // - 인증 메일을 발송하고 결과에 따라 validation
-      AuthRepository().sendEmailVerification().then((result) async {
-        switch (result) {
-          case Status.success:
-            Get.back();
-            Get.snackbar(
-              '인증메일 발송 성공!',
-              '인증 메일이 발송되었어요.\n이메일 인증 후, 다시 로그인 해주세요.',
-            );
-            break;
-          case Status.alreadyValificated:
-            Get.back();
-            Get.snackbar('인증된 계정', '이미 인증되었습니다. 로그인해주세요.');
-            break;
-          default:
-            Get.back();
-            Get.snackbar('인증메일 발송 실패', '다시 시도해주세요.');
-            break;
-        }
-      });
-    } else {
-      Get.snackbar('이미 인증되었어요.', '인증에 문제가 있다면 개발팀에 문의해주세요.');
-    }
+    // [2]인증메일 발송
+    // - 인증 메일을 발송하고 결과에 따라 validation
+    AuthRepository().sendEmailVerification().then((result) async {
+      switch (result) {
+        case Status.success:
+          Get.back();
+          Get.snackbar(
+            '인증메일 발송 성공!',
+            '인증 메일이 발송되었어요.\n이메일 인증 후, 다시 로그인 해주세요.',
+          );
+          break;
+        case Status.alreadyValificated:
+          Get.back();
+          Get.snackbar('인증된 계정', '이미 인증되었습니다. 로그인해주세요.');
+          break;
+        default:
+          Get.back();
+          Get.snackbar('인증메일 발송 실패', '다시 시도해주세요.');
+          break;
+      }
+    });
   }
 
   /// [signUp]은 회원가입에 사용되며, 회원가입 과정을 제어합니다.

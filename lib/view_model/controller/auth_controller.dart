@@ -90,7 +90,7 @@ class AuthController extends GetxController {
   /// Indicator를 닫고 해당 상황에 맞는 snackbar를 출력합니다.
   ///
   /// [signIn]은 [String] 타입의 [id], [pw]를 parameter로 가지므로 사용시 [id], [pw]를 전달해야 합니다.
-  /// 이때, [id]는 이메일 형태여야 합니다. 현 시스템(v22.5.2 기준)에서 입력은 `@catholic.ac.kr`을 입력받지 않으므로 이에 대한 처리를 반드시 해주어야 합니다.
+  /// 이때, [id]는 이메일 형태여야 합니다. 현 시스템(latest 기준)에서 입력은 `@catholic.ac.kr`을 입력받지 않으므로 이에 대한 처리를 반드시 해주어야 합니다.
   ///
   /// ---
   /// Example:
@@ -207,8 +207,8 @@ class AuthController extends GetxController {
   ///
   /// |[Auth]              |[signOut]작동 시점                                            |
   /// |:-------------------|:-----------------------------------------------------------|
-  /// |[Auth.emailVerified]|[Service.SETTING_ROUTE]의 `로그아웃`버튼 클릭 시                  |
-  /// |[Auth.signIn]       |[Service.SIGN_IN_ROUTE]의 인증메일 재발송 Dialog의 `닫기`버튼 클릭 시|
+  /// |[Auth.emailVerified]|[Service.SETTING_ROUTE]에서 `로그아웃`버튼 클릭 시                  |
+  /// |[Auth.signIn]       |[Service.SIGN_IN_ROUTE]에서 `인증메일 재발송 Dialog`의 `닫기`버튼 클릭 시|
   ///
   /// ---
   /// Example:
@@ -308,13 +308,44 @@ class AuthController extends GetxController {
   /// [signUp]은 회원가입에 사용되며, 회원가입 과정을 제어합니다.
   ///
   /// [AuthRepository]에 회원가입시 필요한 정보[map]와 함께 회원가입을 요청합니다.
+  /// latest 기준, [map]은 아래와 같은 정보를 반드시 포함하여야 합니다.
+  /// |Type    |key     |Description                                    |
+  /// |:-------|:-------|:----------------------------------------------|
+  /// |[String]|`id`    |가톨릭대 웹메일, `@catholic.ac.kr`을 포함하는 형태여야 함|
+  /// |[String]|`pw`    |입력한 비밀번호                                    |
+  /// |[String]|`name`  |사용자 이름                                       |
+  /// |[String]|`branch`|선택한 교정                                       |
+  /// |[String]|`major` |선택한 학과                                       |
   ///
-  /// - 회원가입 성공할 경우
-  /// > ...
-  /// - 이미 존재하는 계정으로 회원가입을 시도할 경우
-  /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
-  /// - 그 외 회원가입을 실패할 경우
-  /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
+  /// latest 기준, 회원가입시 [SignUpController]에 의해 위 정보가 저장되어 관리됩니다.
+  ///
+  /// 익명 사용자의 경우, 먼저 해당 익명 계정을 삭제하고 회원가입을 진행해야 합니다.
+  /// 계정 삭제는 [withdraw]를 사용하여 진행됩니다.
+  ///
+  /// 회원가입에 성공할 경우(`result == Status.success`), [UserController]의 [addUserInfoInDB]를 통해 사용자 정보를 DB에 새롭게 등록합니다.
+  /// 이때 [map]의 `pw`를 제외한 나머지 정보를 전달합니다.
+  /// 이후, [sendEmailVerification]을 통해 인증메일을 발송합니다.
+  /// 마지막으로 [signOut]을 통해 로그아웃을 진행하고 사용자를 [Service.SIGN_IN_ROUTE] 화면으로 이동시킵니다.
+  /// 이는 [AuthRepository]에서 [FirebaseAuth]를 사용하여 회원가입을 하면 회원가입 성공시 자동으로 로그인되기 때문입니다.
+  ///
+  /// 회원가입에 실패할 경우(`result == Status.emailAlreadyInUse || Status.error`),
+  /// 각 상황에 맞게 snackbar를 출력합니다.
+  ///
+  /// ---
+  /// Example:
+  /// ```
+  /// final _signUpController = Get.put(SignUpController());
+  ///
+  /// Map<String, dynamic> map = {
+  ///   'id': _signUpController.id,
+  ///   'pw': _signUpController.pw,
+  ///   'name': _signUpController.name,
+  ///   'branch': _signUpController.branch,
+  ///   'major': _signUpController.major,
+  /// };
+  ///
+  /// await _authController.signUp(map);
+  /// ```
   Future signUp(Map<String, dynamic> map) async {
     // Display Indicator
     Get.defaultDialog(
@@ -325,22 +356,27 @@ class AuthController extends GetxController {
         backgroundColor: Colors.white,
       ),
     );
+    // [1]익명 사용자 회원탈퇴
     if (status == Auth.isAnonymous) {
       await withdraw();
     }
+    // [2]회원가입
     AuthRepository.withIDandPW(id: map['id'], pw: map['pw'])
         .signUp()
         .then((result) async {
       switch (result) {
         case Status.success:
+          // [3]사용자 정보 저장
           await UserController().addUserInfoInDB({
             'id': map['id'],
             'name': map['name'],
             'major': map['major'],
             'branch': map['branch'],
           });
-          Get.back();
+          Get.back(); // Indicator Off
+          // [4]인증메일 발송
           await sendEmailVerification();
+          // [5]로그아웃 및 로그인 화면으로 이동
           await signOut();
           break;
         case Status.emailAlreadyInUse:

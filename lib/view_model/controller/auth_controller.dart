@@ -3,7 +3,6 @@ import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/asset/data/status.dart';
 import 'package:cuk/model/repository/auth_repository.dart';
 import 'package:cuk/view_model/controller/user_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -41,7 +40,6 @@ import 'package:get/route_manager.dart';
 ///
 /// See Also:
 /// - [Getx] https://pub.dev/documentation/get/latest/
-///
 class AuthController extends GetxController {
   /// [status]는 현재 사용자의 [Auth] 상태를 의미합니다.
   ///
@@ -79,12 +77,27 @@ class AuthController extends GetxController {
   /// 이는 익명 사용자 역시 현재 익명 상태로 로그인된 상태이기 때문입니다.
   /// 로그인 상태에서 로그인을 시도할 수 없으므로, 회원탈퇴를 진행하여 DB의 해당 익명 계정 정보를 삭제하고 로그아웃합니다.
   ///
-  /// > 로그인 성공 시(`result == 'Status.success'`)
-  /// > 사용자의 상태에 따라 아래와 같이 작동합니다.
-  /// > -
-  /// > - Auth.i
-  /// - 로그인 실패 시(`result == 'Status.userNotFound || Status.wrongPW || Status.error'`)
-  /// > [Get.back]을 통해 [Get.defaultDialog]를 닫고 [Get.snackbar]를 출력합니다.
+  /// 로그인 성공 시(`result == 'Status.success'`), 사용자의 [Auth]상태에 따라 아래와 같이 작동합니다.
+  /// - [Auth.signIn]일 경우, 이메일 인증이 필요 Dialog를 출력합니다.
+  /// 해당 Dialog는 `닫기`를 클릭하여야 닫을 수 있으며, `닫기` 클릭 시 로그아웃[signOut]을 진행합니다.
+  /// `인증 메일 재발송` 버튼 클릭 시, 인증 메일을 재발송하는 로직[sendEmailVerification]을 실행합니다.
+  /// - [Auth.emailVerified]일 경우, 해당 사용자의 정보를 읽어오는 [UserController]의 [readUserInfoInDB]을 실행합니다.
+  ///
+  /// 로그인 실패 시(`result == 'Status.userNotFound || Status.wrongPW || Status.error'`), 각 Exception에 맞게 예외처리합니다.
+  /// Indicator를 닫고 해당 상황에 맞는 snackbar를 출력합니다.
+  ///
+  /// [signIn]은 [String] 타입의 [id], [pw]를 parameter로 가지므로 사용시 [id], [pw]를 전달해야 합니다.
+  /// 이때, [id]는 이메일 형태여야 합니다. 현 시스템(v22.5.2 기준)에서 입력은 `@catholic.ac.kr`을 입력받지 않으므로 이에 대한 처리를 반드시 해주어야 합니다.
+  ///
+  /// Example:
+  /// ```
+  /// final _authController = Get.find<AuthController>();
+  ///
+  /// TextEditingController id = TextEditingController();
+  /// TextEditingController pw = TextEditingController();
+  ///
+  /// await _authController.signIn(id.text + '@catholic.ac.kr', pw.text);
+  /// ```
   Future signIn(String id, String pw) async {
     // [1] Display Indicator
     Get.defaultDialog(
@@ -112,6 +125,7 @@ class AuthController extends GetxController {
           // - 해당 사용자에 대해 이메일 인증 Dialog 출력
           if (status == Auth.signIn) {
             Get.back(); // Indicator Off
+
             // Display Dialog
             Get.defaultDialog(
               barrierDismissible: false,
@@ -123,7 +137,7 @@ class AuthController extends GetxController {
                   await signOut();
                   Get.back();
                 },
-                child: Text('로그인 하러 가기'),
+                child: const Text('로그인 하러 가기'),
               ),
               title: '이메일 인증이 필요합니다.',
               titleStyle: TextStyle(
@@ -174,12 +188,29 @@ class AuthController extends GetxController {
   /// [signOut]은 로그아웃에 사용되며, 로그아웃 과정을 제어합니다.
   ///
   /// [AuthRepository]에 로그아웃을 요청합니다.
-  ///  - 로그아웃에 성공할 경우(`result == 'success'`)
-  /// > [Get.offAllNamed]을 통해 [Get.defaultDialog]를 닫고 `sign_in_view.dart`로 이동합니다.
-  /// - 로그아웃에 실패할 경우
-  /// > [Get.back]을 통해 [Get.defaultDialog]를 닫고 [Get.snackbar]를 출력합니다.
-  /// - 로그아웃 요청시 로그아웃 상태일 경우
-  /// > [Get.snackbar]를 통해 로그아웃 상태임을 알리고 [Get.offAllNamed]을 통해 `sign_in_view.dart`로 이동합니다.
+  /// 로그아웃은 사용자가 [Auth.emailVerified] 또는 [Auth.signIn] 상태에서만 작동되어야 합니다.
+  /// 익명 계정[Auth.isAnonymous]에 대해 로그아웃을 진행할 경우, FirebaseAuth에서 해당 익명 계정은 더이상 접근이 불가능한 legacy가 되어 관리가 불가능해집니다.
+  /// 이는 FirebaseAuth가 제공하는 익명 로그인 기능이 익명 계정 생성시 매번 다른 uid를 만들어내기 때문입니다.
+  ///
+  /// 로그아웃에 성공할 경우(`result == 'success'`), [Service.SIGN_IN_ROUTE]를 Display합니다.
+  /// 이때, 사용자의 이전 화면이 [Service.SIGN_IN_ROUTE]라면 Display하지 않고 [Get.back]을 통해 인증메일 재발송 Dialog를 off합니다.
+  /// [signOut]이 작동될 때, 이전 화면이 [Service.SIGN_IN_ROUTE]일 경우는 [signIn]에서 사용자가 [Auth.signIn]상태로 로그인을 시도한 후, 인증메일 재발송 Dialog에서 `닫기`버튼을 클릭한 상황입니다.
+  /// 따라서, 해당 상황에서는 새롭게 [Service.SIGN_IN_ROUTE]를 Display할 필요없이 [Get.back]을 통해 [Service.SIGN_IN_ROUTE]로 되돌아가게 합니다.
+  ///
+  /// 로그아웃에 실패할 경우, 로그아웃 실패 snackbar를 출력합니다.
+  ///
+  /// 시스템(v22.5.2 기준)에서 사용자 [Auth]별 [signOut]작동 시점은 아래와 같습니다.
+  ///
+  /// |[Auth]              |[signOut]작동 시점                                            |
+  /// |:-------------------|:-----------------------------------------------------------|
+  /// |[Auth.emailVerified]|[Service.SETTING_ROUTE]의 `로그아웃`버튼 클릭 시                  |
+  /// |[Auth.signIn]       |[Service.SIGN_IN_ROUTE]의 인증메일 재발송 Dialog의 `닫기`버튼 클릭 시|
+  ///
+  /// Example:
+  /// ```
+  /// final _authController = Get.find<AuthController>();
+  /// await _authController.signOut();
+  /// ```
   Future signOut() async {
     // Display Indicator
     Get.defaultDialog(
@@ -190,10 +221,10 @@ class AuthController extends GetxController {
         backgroundColor: Colors.white,
       ),
     );
-    // [1]로그아웃 상태 확인
-    // - 현재 사용자가 로그아웃 상태인지 확인함
-    // - 사용자가 로그아웃 상태가 아니라면 로그아웃을 진행함
-    if (status != Auth.signOut) {
+    // [1]로그아웃 가능 여부 판단
+    // - 현재 사용자가 로그아웃 또는 익명 상태인지 확인함
+    // - 사용자가 로그아웃 또는 익명 상태가 아니라면 로그아웃을 진행함
+    if (status != Auth.signOut && status != Auth.isAnonymous) {
       AuthRepository().signOut().then((result) {
         switch (result) {
           case Status.success:
@@ -236,8 +267,6 @@ class AuthController extends GetxController {
         barrierDismissible: false,
         content: const CircularProgressIndicator.adaptive(),
       );
-
-      print(FirebaseAuth.instance.currentUser);
 
       // [2]인증메일 발송
       // - 인증 메일을 발송하고 결과에 따라 validation

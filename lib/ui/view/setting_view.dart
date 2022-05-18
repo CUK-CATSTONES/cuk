@@ -44,7 +44,7 @@ class SettingView extends StatelessWidget {
                     style: Theme.of(context).textTheme.headline4,
                   ),
                   onTap: () async {
-                    _authController.signOut();
+                    await _authController.signOut();
                   },
                 ),
                 ListTile(

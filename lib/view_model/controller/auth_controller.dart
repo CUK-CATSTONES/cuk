@@ -282,7 +282,7 @@ class AuthController extends GetxController {
       content: const CircularProgressIndicator.adaptive(),
     );
 
-    // [2]인증메일 발송
+    // [1]인증메일 발송
     // - 인증 메일을 발송하고 결과에 따라 validation
     AuthRepository().sendEmailVerification().then((result) async {
       switch (result) {
@@ -307,7 +307,8 @@ class AuthController extends GetxController {
 
   /// [signUp]은 회원가입에 사용되며, 회원가입 과정을 제어합니다.
   ///
-  /// [AuthRepository]에 [id], [pw]과 함께 회원가입을 요청합니다.
+  /// [AuthRepository]에 회원가입시 필요한 정보[map]와 함께 회원가입을 요청합니다.
+  ///
   /// - 회원가입 성공할 경우
   /// > ...
   /// - 이미 존재하는 계정으로 회원가입을 시도할 경우
@@ -315,6 +316,7 @@ class AuthController extends GetxController {
   /// - 그 외 회원가입을 실패할 경우
   /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
   Future signUp(Map<String, dynamic> map) async {
+    // Display Indicator
     Get.defaultDialog(
       barrierDismissible: false,
       title: '',
@@ -330,7 +332,7 @@ class AuthController extends GetxController {
         .signUp()
         .then((result) async {
       switch (result) {
-        case 'success':
+        case Status.success:
           await UserController().addUserInfoInDB({
             'id': map['id'],
             'name': map['name'],
@@ -341,7 +343,7 @@ class AuthController extends GetxController {
           await sendEmailVerification();
           await signOut();
           break;
-        case 'email-already-in-use':
+        case Status.emailAlreadyInUse:
           Get.back();
           Get.snackbar('회원가입 실패', '이미 존재하는 아이디입니다.');
           break;

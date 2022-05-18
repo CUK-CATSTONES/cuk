@@ -50,20 +50,6 @@ class AuthRepository {
 
     return Status.success;
   }
-  /*
-      case 'user-not-found':
-          Get.back();
-          Get.snackbar('로그인 실패', '해당 아이디 정보가 없어요.');
-          break;
-        case 'wrong-password':
-          Get.back();
-          Get.snackbar('로그인 실패', '잘못된 비밀번호가 입력되었어요.');
-          break;
-        default:
-          Get.back();
-          Get.snackbar('로그인 실패', '다시 시도해주세요.');
-          break;
-  */
 
   /// [sendEmailVerification]는 [FirebaseAuth.instance]의 [currentUser.sendEmailVerification]을 통해 Firebase에 인증 메일 발송을 요청합니다.
   ///
@@ -115,16 +101,21 @@ class AuthRepository {
   ///   > `'success'`를 반환합니다.
   /// - 실패할 경우
   ///   > [FirebaseAuthException.code]를 반환합니다.
-  Future<String> signUp() async {
+  Future<Status> signUp() async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: id,
         password: pw,
       );
     } on FirebaseAuthException catch (e) {
-      return e.code;
+      switch (e.code) {
+        case 'email-already-in-use':
+          return Status.emailAlreadyInUse;
+        default:
+          return Status.error;
+      }
     }
-    return 'success';
+    return Status.success;
   }
 
   /// [sendPasswordResetEmail]는 [FirebaseAuth.instance]의 [sendPasswordResetEmail]을 통해 Firebase에 비밀번호 초기화 메일 발송을 요청합니다.

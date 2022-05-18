@@ -3,6 +3,7 @@ enum Status {
   userNotFound,
   wrongPW,
   alreadyValificated,
+  emailAlreadyInUse,
   error,
 }
 

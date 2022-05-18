@@ -80,17 +80,17 @@ class AuthRepository {
   ///   > [FirebaseAuthException.code]를 반환합니다.
   /// - 이미 인증된 계정일 경우
   ///   > `'already-valificated'`을 반환합니다.
-  Future<String> sendEmailVerification() async {
+  Future<Status> sendEmailVerification() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null && !user.emailVerified) {
       try {
         user.sendEmailVerification();
       } catch (e) {
-        return e.toString();
+        return Status.error;
       }
-      return 'success';
+      return Status.success;
     }
-    return 'already-valificated';
+    return Status.alreadyValificated;
   }
 
   /// [signOut]는 [FirebaseAuth.instance]의 [signOut]을 통해 Firebase에 로그아웃을 요청합니다.

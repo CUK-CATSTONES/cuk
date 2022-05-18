@@ -2,6 +2,7 @@ enum Status {
   success,
   userNotFound,
   wrongPW,
+  alreadyValificated,
   error,
 }
 

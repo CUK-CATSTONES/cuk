@@ -28,6 +28,8 @@ import 'package:get/route_manager.dart';
 /// [AuthController]는 [GetxController]를 상속받습니다.
 /// 이에 따라 루트 파일인 `main.dart`에서 아래와 같이 선언됩니다.
 ///
+/// ---
+/// Example:
 /// ```
 /// final _authController = Get.put(AuthController());
 /// ```
@@ -38,6 +40,7 @@ import 'package:get/route_manager.dart';
 /// final _authController = Get.find<AuthController>();
 /// ```
 ///
+/// ---
 /// See Also:
 /// - [Getx] https://pub.dev/documentation/get/latest/
 class AuthController extends GetxController {
@@ -89,6 +92,7 @@ class AuthController extends GetxController {
   /// [signIn]은 [String] 타입의 [id], [pw]를 parameter로 가지므로 사용시 [id], [pw]를 전달해야 합니다.
   /// 이때, [id]는 이메일 형태여야 합니다. 현 시스템(v22.5.2 기준)에서 입력은 `@catholic.ac.kr`을 입력받지 않으므로 이에 대한 처리를 반드시 해주어야 합니다.
   ///
+  /// ---
   /// Example:
   /// ```
   /// final _authController = Get.find<AuthController>();
@@ -206,6 +210,7 @@ class AuthController extends GetxController {
   /// |[Auth.emailVerified]|[Service.SETTING_ROUTE]의 `로그아웃`버튼 클릭 시                  |
   /// |[Auth.signIn]       |[Service.SIGN_IN_ROUTE]의 인증메일 재발송 Dialog의 `닫기`버튼 클릭 시|
   ///
+  /// ---
   /// Example:
   /// ```
   /// final _authController = Get.find<AuthController>();
@@ -250,9 +255,13 @@ class AuthController extends GetxController {
   /// [sendEmailVerification]은 인증메일 발송에 사용되며, 이메일 발송을 제어합니다.
   ///
   /// [AuthRepository]에 이메일 인증을 요청합니다.
-  /// id(email)값이 필요하므로 id를 입력받은 상태에서만 사용가능합니다.
-  /// 이메일 인증이 되지 않은 사용자의 경우 로그인하지 않은 상태이므로, 보통의 경우 로그인 시도 후
-  /// - 인증에 성공할 경우
+  /// 회원가입[signUp] 성공 로직에서 사용하며, 사용자가 계정(가톨릭대학교 웹메일)로 인증메일을 발송합니다.
+  /// 인증메일 발송은 FirebaseAuth에서 제공하는 기능을 활용합니다.
+  ///
+  /// 또한, 사용자가 [Auth.signIn]상태로 [signIn]을 시도할 경우 인증메일 재발송 Dialog가 출력됩니다.
+  /// 해당 Dialog에서 `인증메일 재발송 버튼`을 클릭할 경우 [sendEmailVerification]이 작동합니다.
+  ///
+  /// 인증메일 발송에 성공한 경우(),
   /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
   /// - 인증에 실패할 경우
   /// > [Get.back]을 통해 [Get.defaultDialog]을 닫고 [Get.snackbar]을 출력합니다.
@@ -272,12 +281,16 @@ class AuthController extends GetxController {
       // - 인증 메일을 발송하고 결과에 따라 validation
       AuthRepository().sendEmailVerification().then((result) async {
         switch (result) {
-          case 'success':
+          case Status.success:
             Get.back();
             Get.snackbar(
               '인증메일 발송 성공!',
               '인증 메일이 발송되었어요.\n이메일 인증 후, 다시 로그인 해주세요.',
             );
+            break;
+          case Status.alreadyValificated:
+            Get.back();
+            Get.snackbar('인증된 계정', '이미 인증되었습니다. 로그인해주세요.');
             break;
           default:
             Get.back();

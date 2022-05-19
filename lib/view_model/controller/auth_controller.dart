@@ -229,7 +229,7 @@ class AuthController extends GetxController {
     // [1]로그아웃 가능 여부 판단
     // - 현재 사용자가 로그아웃 또는 익명 상태인지 확인함
     // - 사용자가 로그아웃 또는 익명 상태가 아니라면 로그아웃을 진행함
-    if (status != Auth.signOut && status != Auth.isAnonymous) {
+    if (status != Auth.signOut) {
       AuthRepository().signOut().then((result) {
         switch (result) {
           case Status.success:
@@ -461,7 +461,7 @@ class AuthController extends GetxController {
             break;
           default:
             Get.back();
-            Get.snackbar('로그인을 할 수 없어요.', '개발팀에 문의해주세요.');
+            Get.snackbar('알 수 없는 에러', '개발팀에 문의해주세요.');
             break;
         }
       });

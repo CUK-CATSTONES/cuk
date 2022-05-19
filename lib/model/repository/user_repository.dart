@@ -24,7 +24,7 @@ class UserRepository extends SharedPreferencesImpl {
       Map<String, dynamic>? map = user?.toJson();
       map!.addAll({'createdTime': Timestamp.now()});
       CollectionReference userDB = FirebaseFirestore.instance.collection(root);
-      userDB.doc(user!.uid).set(map);
+      await userDB.doc(user!.uid).set(map);
     } catch (e) {
       log(e.toString());
       return Status.error;

@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 22.5.4+124
+version: 22.5.5+130
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
@@ -39,15 +39,15 @@ dependencies:
   path: ^1.8.0
   sqflite: ^2.0.2+1
   url_launcher: ^6.1.2
-  flutter_slidable: ^1.2.0
+  flutter_slidable: ^3.0.0
   carousel_slider: ^4.1.1
   shared_preferences: ^2.0.13
-  webview_flutter: ^3.0.2
-  firebase_core: ^1.16.0
-  firebase_auth: ^3.3.17
-  cloud_firestore: ^3.1.14
+  firebase_core: ^2.17.0
+  firebase_auth: ^4.10.1
+  cloud_firestore: ^4.9.3
   html: ^0.15.0
-  http: ^0.13.4
+  http: ^1.1.0
+  webview_flutter: ^4.4.1
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +58,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

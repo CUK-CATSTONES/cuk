@@ -4,6 +4,7 @@ import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/splash.dart';
 import 'package:cuk/ui/view/edit_info_view.dart';
 import 'package:cuk/ui/view/home_view.dart';
+import 'package:cuk/ui/view/lost_find_view.dart';
 import 'package:cuk/ui/view/notice_pin_view.dart';
 import 'package:cuk/ui/view/notice_view.dart';
 import 'package:cuk/ui/view/push_noti_view.dart';
@@ -62,7 +63,7 @@ class Cuk extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
-      builder: (child) => GetMaterialApp(
+      builder: (_, child) => GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'CUKCAT',
         theme: ThemeData(
@@ -268,6 +269,10 @@ class Cuk extends StatelessWidget {
           GetPage(
             name: Service.TAG_NOTI_ROUTE,
             page: () => const TagNotiView(),
+          ),
+          GetPage(
+            name: Service.LOST_FIND_ROUTE,
+            page: () => LostFindView(),
           ),
         ],
       ),

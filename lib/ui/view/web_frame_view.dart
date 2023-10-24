@@ -30,7 +30,7 @@ class _WebFrameViewState extends State<WebFrameView> {
     log(Get.arguments.toString());
     url = Get.arguments;
 
-    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    // if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 
   @override
@@ -130,11 +130,11 @@ class _WebFrameViewState extends State<WebFrameView> {
             ],
           ),
         ),
-        body: WebView(
-          initialUrl: url,
-          backgroundColor: Colors.white,
-          javascriptMode: JavascriptMode.unrestricted,
-        ),
+        // body: WebView(
+        //   initialUrl: url,
+        //   backgroundColor: Colors.white,
+        //   javascriptMode: JavascriptMode.unrestricted,
+        // ),
       ),
     );
   }

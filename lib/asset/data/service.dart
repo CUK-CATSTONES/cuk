@@ -19,6 +19,7 @@ class Service {
   static String EDIT_INFO_ROUTE = '/edit-info';
   static String WITHDRAW_ROUTE = '/withdraw';
   static String WEB_LAUNCH_ROUTE = '/web-launch/:param';
+  static String LOST_FIND_ROUTE = '/lost-find';
 
   static List list = [
     {
@@ -38,6 +39,13 @@ class Service {
       'icon': CupertinoIcons.tag,
       'color': const Color.fromARGB(255, 53, 76, 180),
       'route': TAG_NOTI_ROUTE,
+    },
+    {
+      'title': '유실물 찾기',
+      'icon': CupertinoIcons.question_square,
+      // 'icon': Image.asset('lib/asset/images/splash.jpg'),
+      'color': const Color.fromARGB(255, 209, 87, 87),
+      'route': LOST_FIND_ROUTE,
     },
   ];
 }

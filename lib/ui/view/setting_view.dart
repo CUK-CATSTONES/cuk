@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 class SettingView extends StatelessWidget {
   final _authController = Get.find<AuthController>();
+  bool isPushon = true;
 
   SettingView({Key? key}) : super(key: key);
 
@@ -80,6 +81,21 @@ class SettingView extends StatelessWidget {
                   ),
                   onTap: () => Get.toNamed(Service.WITHDRAW_ROUTE),
                 ),
+                SwitchListTile(
+                  //settings for push alarm
+                  secondary: const Icon(Icons.notifications,
+                      color: Color.fromARGB(255, 0, 0, 153)),
+
+                  title: Text(
+                    '알림 설정',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  value: isPushon, //boolean needs to be changed
+                  onChanged: (bool? value) {
+                    // _ChangePushAlarm(value);
+                    // print(!value);
+                  },
+                )
               ],
             ),
           ),
@@ -140,5 +156,12 @@ class SettingView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _ChangePushAlarm(bool value) {
+    //turn on off push alarm
+    // setState(() {
+    isPushon = value;
+    // });
   }
 }

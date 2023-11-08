@@ -67,4 +67,55 @@ class ParseImpl implements ParseInterface {
     }
     return maps;
   }
+
+  Future getLostFind(Document docs) async {
+    List<Map> maps = [];
+
+    List li = docs
+        .getElementsByClassName('rbbs_list_normal_sec')
+        .first
+        .getElementsByTagName('li');
+    for (Element e in li) {
+      List info = e
+          .getElementsByClassName('info_line')
+          .first
+          .getElementsByTagName('div');
+      int authorIndex = (info.length < 4) ? 0 : 1;
+      int datetimeIndex = (info.length < 4) ? 1 : 2;
+
+      String? title = e
+          .getElementsByClassName('text')[0]
+          .firstChild!
+          .text
+          .toString()
+          .replaceAll('\n', '')
+          .replaceAll('\t', '');
+
+      String? image = 'https://www.catholic.ac.kr' +
+          e.getElementsByTagName('a')[0].attributes['href'].toString();
+
+      String? author = (info[authorIndex] as Element)
+          .text
+          .replaceAll('\n', '')
+          .replaceAll('\t', '')
+          .replaceRange(0, 6, '');
+
+      String? datetime = (info[datetimeIndex] as Element)
+          .text
+          .replaceAll('\n', '')
+          .replaceAll('\t', '')
+          .replaceRange(0, 6, '');
+
+      bool? flag = e.getElementsByClassName('flag top').isNotEmpty;
+
+      maps.add({
+        'title': title,
+        'author': author,
+        'datetime': datetime,
+        'image': image,
+        'flag': flag,
+      });
+    }
+    return maps;
+  }
 }

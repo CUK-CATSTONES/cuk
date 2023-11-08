@@ -4,7 +4,8 @@ import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/splash.dart';
 import 'package:cuk/ui/view/edit_info_view.dart';
 import 'package:cuk/ui/view/home_view.dart';
-import 'package:cuk/ui/view/lost_find_view.dart';
+import 'package:cuk/ui/view/lost_findF_view.dart';
+import 'package:cuk/ui/view/lost_findL_view.dart';
 import 'package:cuk/ui/view/notice_pin_view.dart';
 import 'package:cuk/ui/view/notice_view.dart';
 import 'package:cuk/ui/view/push_noti_view.dart';
@@ -14,6 +15,7 @@ import 'package:cuk/ui/view/setting_view.dart';
 import 'package:cuk/ui/view/sign_in_view.dart';
 import 'package:cuk/ui/view/sign_up_view.dart';
 import 'package:cuk/ui/view/edit_slot_view.dart';
+import 'package:cuk/ui/view/tag_lostfind_view.dart';
 import 'package:cuk/ui/view/tag_noti_view.dart';
 import 'package:cuk/ui/view/web_frame_view.dart';
 import 'package:cuk/ui/view/withdraw_view.dart';
@@ -23,6 +25,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import 'ui/view/lost_find_info_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -272,7 +276,19 @@ class Cuk extends StatelessWidget {
           ),
           GetPage(
             name: Service.LOST_FIND_ROUTE,
-            page: () => LostFindView(),
+            page: () => const LostFindLView(),
+          ),
+          GetPage(
+            name: Service.TAG_LOST_FIND_ROUTE,
+            page: () => const TagLostFindView(),
+          ),
+          GetPage(
+            name: Service.LOST_FINDF_ROUTE,
+            page: () => const LostFindFView(),
+          ),
+          GetPage(
+            name: Service.LOST_FIND_CUKCAT_ROUTE,
+            page: () => LostFindInfoView(),
           ),
         ],
       ),

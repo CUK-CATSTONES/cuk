@@ -20,6 +20,9 @@ class Service {
   static String WITHDRAW_ROUTE = '/withdraw';
   static String WEB_LAUNCH_ROUTE = '/web-launch/:param';
   static String LOST_FIND_ROUTE = '/lost-find';
+  static String TAG_LOST_FIND_ROUTE = '/lost-find/tag';
+  static String LOST_FINDF_ROUTE = '/lost-findF';
+  static String LOST_FIND_CUKCAT_ROUTE = '/lost-find/cukcat';
 
   static List list = [
     {
@@ -43,7 +46,6 @@ class Service {
     {
       'title': '유실물 찾기',
       'icon': CupertinoIcons.question_square,
-      // 'icon': Image.asset('lib/asset/images/splash.jpg'),
       'color': const Color.fromARGB(255, 209, 87, 87),
       'route': LOST_FIND_ROUTE,
     },

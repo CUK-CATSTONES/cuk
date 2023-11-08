@@ -397,6 +397,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  spinner_date_time_picker:
+    dependency: "direct main"
+    description:
+      name: spinner_date_time_picker
+      sha256: b0d1b711806b97345aa9e34785b80b35862319e7ffdc3649a5cca97550722349
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   sqflite:
     dependency: "direct main"
     description:

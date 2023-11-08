@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(everytime_view());
+// void main() => runApp(everytime_view());
 
 class everytime_view extends StatelessWidget {
   @override

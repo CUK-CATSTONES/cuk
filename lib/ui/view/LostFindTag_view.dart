@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(LostFindTagView());
+// void main() => runApp(LostFindTagView());
 
 class LostFindTagView extends StatelessWidget {
   @override

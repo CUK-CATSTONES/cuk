@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spinner_date_time_picker/spinner_date_time_picker.dart';
 
-void main() => runApp(LostFindRegisterView());
+// void main() => runApp(LostFindRegisterView());
 
 class LostFindRegisterView extends StatelessWidget {
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // void main() => runApp(LostFindTagView());
 
@@ -79,7 +80,9 @@ class _LostFindTag_view extends State<LostFindTag_view> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
-            onPressed: () {},
+            onPressed: () {
+              Get.back(); //need to be changed
+            },
           ),
         ],
         elevation: 0.0,

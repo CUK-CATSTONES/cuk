@@ -110,8 +110,7 @@ class _LostFindFViewState extends State<LostFindFView> {
                             isSelected[index] = !isSelected[index];
                             target = index;
                             if (target == 1) {
-                              Get.to(LostFindLView(),
-                                  transition: Transition.noTransition);
+                              Get.to(Service.LOST_FIND_REG_ROUTE); //유실물 등록
                               // Get.offNamed('/lost-findF');
                             } else {
                               Get.offNamed('/lost-find');

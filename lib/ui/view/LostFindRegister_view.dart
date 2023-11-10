@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spinner_date_time_picker/spinner_date_time_picker.dart';
+import 'package:get/get.dart';
 
 // void main() => runApp(LostFindRegisterView());
 
@@ -118,7 +119,9 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
-            onPressed: () {},
+            onPressed: () {
+              Get.back(); //need to be changed
+            },
           ),
         ],
         elevation: 0.0,

@@ -23,6 +23,8 @@ class Service {
   static String TAG_LOST_FIND_ROUTE = '/lost-find/tag';
   static String LOST_FINDF_ROUTE = '/lost-findF';
   static String LOST_FIND_CUKCAT_ROUTE = '/lost-find/cukcat';
+  static String LOST_FIND_REG_ROUTE = '/lost-find/register';
+  static String LOST_FIND_TAG_REG_ROUTE = '/lost-find/tag/register';
 
   static List list = [
     {

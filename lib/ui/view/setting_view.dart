@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/ui/component/board_component.dart';
 import 'package:cuk/view_model/controller/auth_controller.dart';

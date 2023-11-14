@@ -25,7 +25,6 @@ class _LostFindTag_repo {
 
 class _LostFindTag_view extends State<LostFindTagView> with _LostFindTag_repo {
   List<bool> _selected = List.generate(63, (index) => false);
-
   Widget _buildButton(String title, int index) {
     return OutlinedButton(
       child: Text(title),

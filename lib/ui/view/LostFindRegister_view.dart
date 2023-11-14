@@ -355,6 +355,7 @@ class _LostFindRegister_view extends State<LostFindRegisterView>
                 widget._NameInput.text = _name;
                 widget._PlaceInput.text = _PlaceDetails;
                 widget._EtcInput.text = _ETC;
+                Get.back();
               },
               child: Text('등록'),
             ),

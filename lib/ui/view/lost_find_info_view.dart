@@ -27,12 +27,12 @@ class LostFindInfoView extends StatelessWidget {
           losttitle: '책',
           icon: Icons.search,
           // 자동 줄바꿈 해결해야함 & 줄 바꿈시 왼쪽 제목과 줄이 달라짐
-          details: '제가 개인적으로 보관중입니다.\n010-6444-6887로 연락주세요.',
+          // details: '제가 개인적으로 보관중입니다.\n010-6444-6887로 연락주세요.',
           getdate: '23.05.17',
           writedate: '2023.09.21',
           getspace: '니콜스 3층 311',
           keepspace: '개인 보관',
-          // link: "",
+          link: "",
         ),
       ),
     );

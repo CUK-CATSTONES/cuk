@@ -43,8 +43,8 @@ class _LostFindLViewState extends State<LostFindLView> {
         visible: target == 1 ? false : true,
         child: FloatingActionButton.extended(
           onPressed: () {
-            print('유실물 등록');
-            // Get.toNamed('addLostFind');
+            Get.toNamed(
+                Service.LOST_FIND_REG_ROUTE); //Service.LOST_FIND_REG_ROUTE
           },
           label: const Text(
             "유실물 등록",

@@ -1,36 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spinner_date_time_picker/spinner_date_time_picker.dart';
+import 'package:get/get.dart';
 
-// void main() => runApp(LostFindRegisterView());
-
-class LostFindRegisterView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'for development',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: AppBarTheme(
-          color: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
-        buttonTheme: ButtonThemeData(
-          buttonColor: Colors.white,
-          textTheme: ButtonTextTheme.primary,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black),
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-        ),
-      ),
-      home: LostFindRegister_view(),
-    );
-  }
-}
-
-class LostFindRegister_view extends StatefulWidget {
+class LostFindRegisterView extends StatefulWidget {
   @override
   _LostFindRegister_view createState() => _LostFindRegister_view();
   final TextEditingController _NameInput = TextEditingController();
@@ -44,37 +16,89 @@ class LostFindRegister_view extends StatefulWidget {
   }
 }
 
-class _LostFindRegister_view extends State<LostFindRegister_view> {
-  List<bool> _selected = List.generate(63, (index) => false);
+class _LostFindRegister_repo {
+  String _category = ''; //카테고리 버튼
+  String _CategoryDetails = ''; //cateogory 세부사항
+  String _name = ''; //물건 이름
+  String _place = ''; //습득장소 버튼
+  String _placeIn = ''; //보관장소
+  String _PlaceDetails = ''; //place 세부사항
+  DateTime _date = DateTime.now(); //습득일자
+  String _ETC = ''; //기타사항
+}
+
+class _LostFindRegister_view extends State<LostFindRegisterView>
+    with _LostFindRegister_repo {
   var today = DateTime.now();
   DateTime selectedDate = DateTime.now();
   String selectedButton = '';
-  Widget _buildButton(String title, int index) {
+  String selectedCategory = '';
+  bool _selectedCat = true;
+  bool _selectedPla = true;
+  Widget _categoryButton(String title) {
     return OutlinedButton(
-      child: Text(title),
-      onPressed: () {
-        setState(() {
-          _selected[index] = !_selected[index];
-        });
-      },
-      style: OutlinedButton.styleFrom(
-        primary: _selected[index]
-            ? Color.fromARGB(162, 133, 133, 133)
-            : Colors.black,
-        backgroundColor: _selected[index]
-            ? Color.fromARGB(173, 173, 173, 173)
-            : Colors.white,
-        side: BorderSide(color: _selected[index] ? Colors.grey : Colors.grey),
-      ),
-    );
+        onPressed: () {
+          handleCategorySelection(title);
+          _category = title;
+          _selectedCat = !_selectedCat;
+        },
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          maximumSize: Size(100, 45),
+          textStyle: TextStyle(foreground: Paint()..color = Colors.black),
+          backgroundColor: selectedCategory == title
+              ? Color.fromARGB(162, 133, 133, 133)
+              : Colors.white,
+          side: BorderSide(
+              color: selectedCategory == title ? Colors.grey : Colors.grey),
+        ),
+        child: Text(title));
+  }
+
+  void handleCategorySelection(String value) {
+    setState(() {
+      selectedCategory = value;
+    });
+  }
+
+  Widget _placeButton(String title) {
+    return OutlinedButton(
+        onPressed: () {
+          handleGetPlaceSelection(title);
+          _selectedPla = !_selectedPla;
+          _place = title;
+        },
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          maximumSize: Size(100, 45),
+          textStyle: TextStyle(foreground: Paint()..color = Colors.black),
+          backgroundColor: selectedCategory == title
+              ? Color.fromARGB(162, 133, 133, 133)
+              : Colors.white,
+          side: BorderSide(
+              color: selectedCategory == title ? Colors.grey : Colors.grey),
+        ),
+        child: Text(title));
+  }
+
+  void handleGetPlaceSelection(String value) {
+    setState(() {
+      selectedCategory = value;
+    });
   }
 
   ElevatedButton _elevatedButton(String label) {
     return ElevatedButton(
       onPressed: () {
-        handleButtonSelection(label);
+        handlePlaceSelection(label);
+        _placeIn = label;
       },
       style: ElevatedButton.styleFrom(
+          maximumSize: Size(100, 45),
           backgroundColor: selectedButton == label
               ? Color.fromRGBO(234, 239, 253, 1)
               : Color.fromRGBO(221, 221, 221, 1),
@@ -83,29 +107,28 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
     );
   }
 
-  void handleButtonSelection(String value) {
+  void handlePlaceSelection(String value) {
     setState(() {
       selectedButton = value;
     });
   }
 
-  bool _isOpen1 = true;
-  bool _isOpen2 = true;
   void _toggleFolder1() {
     setState(() {
-      _isOpen1 = !_isOpen1;
+      _selectedCat = !_selectedCat;
     });
   }
 
   void _toggleFolder2() {
     setState(() {
-      _isOpen2 = !_isOpen2;
+      _selectedPla = !_selectedPla;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           '유실물 등록',
@@ -118,7 +141,9 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
-            onPressed: () {},
+            onPressed: () {
+              Get.back(); //need to be changed
+            },
           ),
         ],
         elevation: 0.0,
@@ -131,29 +156,30 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
           SizedBox(height: 20.0),
           ListTile(
             title: Text('물건 이름'),
-            trailing: Icon(
-                _isOpen1 ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+            trailing: Icon(_selectedCat
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down),
             onTap: _toggleFolder1,
           ),
           AnimatedContainer(
             padding: EdgeInsets.all(16.0),
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: _isOpen1 ? null : 0.0,
-            child: _isOpen1
+            height: _selectedCat ? null : 0.0,
+            child: _selectedCat
                 ? Wrap(spacing: 10.0, children: <Widget>[
-                    _buildButton('가방', 0),
-                    _buildButton('책', 1),
-                    _buildButton('화장품', 2),
-                    _buildButton('의류', 3),
-                    _buildButton('전자기기', 4),
-                    _buildButton('지갑', 5),
-                    _buildButton('서류', 6),
-                    _buildButton('카드', 7),
-                    _buildButton('악세사리', 8),
-                    _buildButton('기숙사키', 9),
-                    _buildButton('우산', 10),
-                    _buildButton('기타', 11),
+                    _categoryButton('가방'),
+                    _categoryButton('책'),
+                    _categoryButton('화장품'),
+                    _categoryButton('의류'),
+                    _categoryButton('전자기기'),
+                    _categoryButton('지갑'),
+                    _categoryButton('서류'),
+                    _categoryButton('카드'),
+                    _categoryButton('악세사리'),
+                    _categoryButton('기숙사키'),
+                    _categoryButton('우산'),
+                    _categoryButton('기타'),
                   ])
                 : null,
           ), //for 2nd
@@ -162,6 +188,10 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
             child: TextField(
               controller: widget._NameInput,
               decoration: InputDecoration(
+                hintStyle: TextStyle(color: Colors.grey),
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
                 hintText: '예시) 아이폰 13, 경재학개론',
                 counterText: '10자 이내',
               ),
@@ -200,38 +230,43 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
           SizedBox(height: 15.0), //for 2nd
           ListTile(
             title: Text('습득장소'),
-            trailing: Icon(
-                _isOpen2 ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+            trailing: Icon(_selectedPla
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down),
             onTap: _toggleFolder2,
           ),
           AnimatedContainer(
             padding: EdgeInsets.all(16.0),
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: _isOpen2 ? null : 0.0,
-            child: _isOpen2
+            height: _selectedPla ? null : 0.0,
+            child: _selectedPla
                 ? Wrap(spacing: 10.0, children: <Widget>[
-                    _buildButton('니콜스관', 12),
-                    _buildButton('다솔관', 13),
-                    _buildButton('학생회관', 14),
-                    _buildButton('김수환관', 15),
-                    _buildButton('기숙사', 16),
-                    _buildButton('마리아관', 17),
-                    _buildButton('비루투스', 18),
-                    _buildButton('밤비노관', 19),
-                    _buildButton('콘서트홀', 20),
-                    _buildButton('성심성당', 21),
-                    _buildButton('약학관', 22),
-                    _buildButton('중앙도서관', 23),
-                    _buildButton('기타', 24),
+                    _placeButton('니콜스관'),
+                    _placeButton('다솔관'),
+                    _placeButton('학생회관'),
+                    _placeButton('김수환관'),
+                    _placeButton('기숙사'),
+                    _placeButton('마리아관'),
+                    _placeButton('비루투스'),
+                    _placeButton('밤비노관'),
+                    _placeButton('콘서트홀'),
+                    _placeButton('성심성당'),
+                    _placeButton('약학관'),
+                    _placeButton('중앙도서관'),
+                    _placeButton('기타'),
                   ])
                 : null,
           ),
           Container(
             padding: EdgeInsetsDirectional.symmetric(horizontal: 16.0),
             child: TextField(
-              controller: widget._NameInput,
+              controller: widget._PlaceInput,
               decoration: InputDecoration(
+                hintStyle: TextStyle(color: Colors.grey),
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
                 hintText: '예시) 아이폰 13, 경재학개론',
                 counterText: '10자 이내',
               ),
@@ -290,20 +325,22 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
             child: TextField(
               controller: widget._EtcInput,
               keyboardType: TextInputType.multiline,
-              style: TextStyle(fontSize: 10.0),
+              style: TextStyle(fontSize: 12.0),
               minLines: 3,
               maxLines: 3,
               decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  hintStyle: TextStyle(color: Colors.grey),
                   hintText:
                       '추가적인 정보를 적어주세요. \n예시) 제가 개인적으로 보관중이니 카카오톡아이디 XXXXX로 연락주세요.',
-                  counterText: '10자 이내',
+                  counterText: '3줄이내',
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   )),
-              maxLength: 10,
             ),
           ),
-          SizedBox(height: 15.0), //for 2nd
+          SizedBox(height: 15.0),
           Container(
             padding: EdgeInsetsDirectional.all(16.0),
             child: ElevatedButton(
@@ -314,7 +351,12 @@ class _LostFindRegister_view extends State<LostFindRegister_view> {
                 minimumSize: Size(double.infinity, 50.0),
                 textStyle: TextStyle(fontSize: 20.0, color: Colors.white),
               ),
-              onPressed: () {},
+              onPressed: () {
+                widget._NameInput.text = _name;
+                widget._PlaceInput.text = _PlaceDetails;
+                widget._EtcInput.text = _ETC;
+                Get.back();
+              },
               child: Text('등록'),
             ),
           ),

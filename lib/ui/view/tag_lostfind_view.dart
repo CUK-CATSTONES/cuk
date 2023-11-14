@@ -1,3 +1,4 @@
+import 'package:cuk/asset/data/service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -54,7 +55,7 @@ class _TagLostFindViewState extends State<TagLostFindView> {
               ),
             ),
             onPressed: () {
-              print('태그 등록');
+              Get.toNamed(Service.LOST_FIND_TAG_REG_ROUTE); //태그 등록 페이지
             },
             child: const Text('태그 등록'),
           ),

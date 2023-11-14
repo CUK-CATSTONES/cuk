@@ -1,47 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // void main() => runApp(LostFindTagView());
 
-class LostFindTagView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'for development',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: AppBarTheme(
-          color: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
-        buttonTheme: ButtonThemeData(
-          buttonColor: Colors.white,
-          textTheme: ButtonTextTheme.primary,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black),
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-        ),
-      ),
-      home: LostFindTag_view(),
-    );
-  }
-}
-
-class LostFindTag_view extends StatefulWidget {
+class LostFindTagView extends StatefulWidget {
   @override
   _LostFindTag_view createState() => _LostFindTag_view();
   final TextEditingController _NameInput = TextEditingController();
-  final TextEditingController _PlaceInput = TextEditingController();
+  final TextEditingController _DetailInput = TextEditingController();
 
   void dispose() {
     _NameInput.dispose();
-    _PlaceInput.dispose();
+    _DetailInput.dispose();
+    dispose();
   }
 }
 
-class _LostFindTag_view extends State<LostFindTag_view> {
+//repo for LostFindTagView that includes all the data
+class _LostFindTag_repo {
+  List<String> _tags = []; //태그들 일단 태그 이름으로만 저장 변경 필요
+  String _details = ''; //세부사항
+  String _name = ''; //물건 이름
+}
+
+class _LostFindTag_view extends State<LostFindTagView> with _LostFindTag_repo {
   List<bool> _selected = List.generate(63, (index) => false);
 
   Widget _buildButton(String title, int index) {
@@ -50,9 +32,20 @@ class _LostFindTag_view extends State<LostFindTag_view> {
       onPressed: () {
         setState(() {
           _selected[index] = !_selected[index];
+          if (_selected[index]) {
+            _tags.add(title);
+          } else {
+            _tags.remove(title);
+          }
+          // print(_tags);
         });
       },
       style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        textStyle: TextStyle(fontSize: 11.0),
+        maximumSize: Size(100, 45),
         primary: _selected[index]
             ? Color.fromARGB(162, 133, 133, 133)
             : Colors.black,
@@ -67,6 +60,7 @@ class _LostFindTag_view extends State<LostFindTag_view> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           '내가 찾는 물건',
@@ -76,10 +70,13 @@ class _LostFindTag_view extends State<LostFindTag_view> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
-            onPressed: () {},
+            onPressed: () {
+              Get.back(); //need to be changed
+            },
           ),
         ],
         elevation: 0.0,
@@ -92,6 +89,10 @@ class _LostFindTag_view extends State<LostFindTag_view> {
           TextField(
             controller: widget._NameInput,
             decoration: InputDecoration(
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              prefixIconColor: Colors.black,
               labelText: '찾는 물건',
               hintText: 'ex)에어팟 프로 (10자이내)',
               counterText: '10자 이내',
@@ -242,8 +243,12 @@ class _LostFindTag_view extends State<LostFindTag_view> {
             height: 10.0,
           ), //for 4th
           TextField(
-            controller: widget._PlaceInput,
+            controller: widget._DetailInput,
             decoration: InputDecoration(
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              prefixIconColor: Colors.black,
               labelText: '위에 없는 세부사항',
               counterText: '10자 이내',
             ),
@@ -258,7 +263,14 @@ class _LostFindTag_view extends State<LostFindTag_view> {
               minimumSize: Size(double.infinity, 50.0),
               textStyle: TextStyle(fontSize: 20.0, color: Colors.white),
             ),
-            onPressed: () {},
+            onPressed: () {
+              _details = widget._DetailInput.text; //세부사항
+              _name = widget._NameInput.text; //이름
+              print(_tags);
+              print(_details);
+              print(_name);
+              Get.back();
+            },
             child: Text('등록'),
           ),
           SizedBox(height: 30.0),

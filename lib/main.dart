@@ -25,6 +25,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:cuk/ui/view/LostFindRegister_view.dart';
+import 'package:cuk/ui/view/LostFindTag_view.dart';
 
 import 'ui/view/lost_find_info_view.dart';
 
@@ -290,6 +292,14 @@ class Cuk extends StatelessWidget {
             name: Service.LOST_FIND_CUKCAT_ROUTE,
             page: () => LostFindInfoView(),
           ),
+          GetPage(
+            name: Service.LOST_FIND_REG_ROUTE,
+            page: () => LostFindRegisterView(),
+          ),
+          GetPage(
+            name: Service.LOST_FIND_TAG_REG_ROUTE,
+            page: () => LostFindTagView(),
+          )
         ],
       ),
     );

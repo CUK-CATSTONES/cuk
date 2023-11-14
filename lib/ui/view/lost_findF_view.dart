@@ -2,7 +2,6 @@ import 'package:cuk/asset/data/auth.dart';
 import 'package:cuk/asset/data/lostfind.dart';
 import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/ui/component/board_component.dart';
-import 'package:cuk/ui/view/lost_findL_view.dart';
 import 'package:cuk/view_model/controller/auth_controller.dart';
 import 'package:cuk/view_model/controller/lost_find_controller.dart';
 import 'package:cuk/view_model/controller/web_controller.dart';
@@ -22,7 +21,7 @@ class _LostFindFViewState extends State<LostFindFView> {
   final _authController = Get.find<AuthController>();
   final List<bool> isSelected = [false, true];
   final List<String> category = ['유실물', '내가 찾는 물건'];
-  int target = 0;
+  int target = 1;
   bool isExpanded = true;
   late Future search;
   bool isValidated = false;
@@ -40,6 +39,25 @@ class _LostFindFViewState extends State<LostFindFView> {
         title: const Text('유실물 찾기'),
         iconTheme: IconThemeData(color: Colors.black),
       ),
+      floatingActionButton: Visibility(
+        visible: target == 1 ? false : true,
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            print('유실물 등록');
+            // Get.toNamed('addLostFind');
+          },
+          label: const Text(
+            "유실물 등록",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          icon: Icon(Icons.edit),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          foregroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 47, 84, 170),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: RefreshIndicator(
         onRefresh: () async {
           _lostFindController.input.clear();

@@ -128,9 +128,11 @@ class _LostFindLViewState extends State<LostFindLView> {
                             isSelected[target] = !isSelected[target];
                             isSelected[index] = !isSelected[index];
                             target = index;
-                            // if (target == 1) {
-                            //   Get.offNamed('/lost-findF');
-                            // }
+                            if (target == 1) {
+                              Get.offNamed('/lost-findF');
+                            } else {
+                              Get.offNamed('/lost-find');
+                            }
                             isExpanded = true;
                           });
                         }
@@ -141,87 +143,6 @@ class _LostFindLViewState extends State<LostFindLView> {
                       children: [
                         Text(LostFind.category[0]),
                         Text(LostFind.category[1]),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Visibility(
-              visible: isSelected[target] == false ? false : true,
-              child: SliverAppBar(
-                pinned: false,
-                automaticallyImplyLeading: false,
-                titleSpacing: 0.0,
-                toolbarHeight: 115.h,
-                expandedHeight: 115.h,
-                title: Container(
-                  width: double.infinity,
-                  height: 115.h,
-                  color: const Color.fromARGB(255, 233, 239, 255),
-                  child: BoardComponent(
-                    title: '나의 태그',
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            onPrimary: Colors.black,
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            backgroundColor: Color.fromRGBO(192, 209, 255, 1.0),
-                            minimumSize: Size(52, 30),
-                            maximumSize: Size(52, 30),
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
-                              color: Colors.black,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            Get.toNamed('/lost-find/cukcat');
-                            // print('전체');
-                          },
-                          child: Text('전체'),
-                        ),
-                        SizedBox(
-                          width: 15.h,
-                        ),
-                        Container(
-                          child: Text(
-                            '태그를 등록하고 알림을 받아보세요:)',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal,
-                              color: Color.fromRGBO(138, 138, 138, 1.0),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20.h,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            minimumSize: Size(75, 30),
-                            maximumSize: Size(75, 30),
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
-                              color: Colors.black,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            Get.toNamed('/lost-find/tag');
-                          },
-                          child: Text('태그 관리'),
-                        ),
                       ],
                     ),
                   ),

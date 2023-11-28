@@ -3,9 +3,10 @@ import 'package:cuk/asset/data/font.dart';
 import 'package:cuk/asset/data/service.dart';
 import 'package:cuk/splash.dart';
 import 'package:cuk/ui/view/edit_info_view.dart';
+import 'package:cuk/ui/view/everytime_view.dart';
 import 'package:cuk/ui/view/home_view.dart';
-import 'package:cuk/ui/view/lost_findF_view.dart';
 import 'package:cuk/ui/view/lost_findL_view.dart';
+import 'package:cuk/ui/view/lost_find_infoet_view.dart';
 import 'package:cuk/ui/view/notice_pin_view.dart';
 import 'package:cuk/ui/view/notice_view.dart';
 import 'package:cuk/ui/view/push_noti_view.dart';
@@ -285,21 +286,9 @@ class Cuk extends StatelessWidget {
             page: () => const TagLostFindView(),
           ),
           GetPage(
-            name: Service.LOST_FINDF_ROUTE,
-            page: () => const LostFindFView(),
-          ),
-          GetPage(
             name: Service.LOST_FIND_CUKCAT_ROUTE,
             page: () => LostFindInfoView(),
           ),
-          GetPage(
-            name: Service.LOST_FIND_REG_ROUTE,
-            page: () => LostFindRegisterView(),
-          ),
-          GetPage(
-            name: Service.LOST_FIND_TAG_REG_ROUTE,
-            page: () => LostFindTagView(),
-          )
         ],
       ),
     );

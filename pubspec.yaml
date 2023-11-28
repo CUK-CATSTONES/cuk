@@ -49,6 +49,7 @@ dependencies:
   http: ^1.1.0
   webview_flutter: ^4.4.1
   spinner_date_time_picker: ^0.0.8
+  intl: ^0.18.1
 
 
 dev_dependencies:

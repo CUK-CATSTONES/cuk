@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:spinner_date_time_picker/spinner_date_time_picker.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class LostFindRegisterView extends StatefulWidget {
   @override
@@ -29,8 +31,8 @@ class _LostFindRegister_repo {
 
 class _LostFindRegister_view extends State<LostFindRegisterView>
     with _LostFindRegister_repo {
-  var today = DateTime.now();
-  DateTime selectedDate = DateTime.now();
+  late DateTime initialDate = DateTime.now();
+  late DateTime selectedDate;
   String selectedButton = '';
   String selectedCategory = '';
   bool _selectedCat = true;
@@ -199,26 +201,21 @@ class _LostFindRegister_view extends State<LostFindRegisterView>
             ),
           ),
 
-          SizedBox(height: 15.0), //for 2nd
-          Container(
-            margin: EdgeInsets.zero,
-            child: Divider(
-              color: Color.fromRGBO(234, 239, 253, 1),
-              height: 10,
-              thickness: 10,
+          SizedBox(height: 15.0),
+          Column(children: [
+            Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              child: CupertinoDatePicker(
+                initialDateTime: initialDate,
+                onDateTimeChanged: (DateTime newdate) {
+                  selectedDate = newdate;
+                },
+                minimumYear: 2021,
+                maximumYear: DateTime.now().year,
+                mode: CupertinoDatePickerMode.date,
+              ),
             ),
-          ),
-          SizedBox(height: 15.0), //for 2nd
-          SpinnerDateTimePicker(
-            initialDateTime: DateTime.now(),
-            maximumDate: today.add(const Duration(days: 7)),
-            minimumDate: today.subtract(const Duration(days: 1)),
-            didSetTime: (value) {
-              setState(() {
-                selectedDate = value;
-              });
-            },
-          ),
+          ]),
           Container(
             margin: EdgeInsets.zero,
             child: Divider(
@@ -355,7 +352,9 @@ class _LostFindRegister_view extends State<LostFindRegisterView>
                 widget._NameInput.text = _name;
                 widget._PlaceInput.text = _PlaceDetails;
                 widget._EtcInput.text = _ETC;
+                _date = selectedDate;
                 Get.back();
+                print(_date);
               },
               child: Text('등록'),
             ),

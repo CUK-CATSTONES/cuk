@@ -43,7 +43,7 @@ class _LostFindTag_view extends State<LostFindTagView> with _LostFindTag_repo {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        textStyle: TextStyle(fontSize: 11.0),
+        textStyle: TextStyle(fontSize: 14.0),
         maximumSize: Size(100, 45),
         primary: _selected[index]
             ? Color.fromARGB(162, 133, 133, 133)

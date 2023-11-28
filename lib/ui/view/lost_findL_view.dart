@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-// 주석
 class LostFindLView extends StatefulWidget {
   const LostFindLView({Key? key}) : super(key: key);
 
@@ -128,9 +127,6 @@ class _LostFindLViewState extends State<LostFindLView> {
                             isSelected[target] = !isSelected[target];
                             isSelected[index] = !isSelected[index];
                             target = index;
-                            // if (target == 1) {
-                            //   Get.offNamed('/lost-findF');
-                            // }
                             isExpanded = true;
                           });
                         }
@@ -218,7 +214,8 @@ class _LostFindLViewState extends State<LostFindLView> {
                             ),
                           ),
                           onPressed: () {
-                            Get.toNamed('/lost-find/tag');
+                            Get.toNamed('/lost-find/everytime');
+                            // Get.toNamed('/lost-find/tag');
                           },
                           child: Text('태그 관리'),
                         ),
